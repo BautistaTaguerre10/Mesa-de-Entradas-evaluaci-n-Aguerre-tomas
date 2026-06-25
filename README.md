@@ -1,7 +1,7 @@
 # Mesa de Entradas Virtual
 Aplicacion web fullstack para gestionar expedientes judiciales, personas, organismos y vinculos entre personas y expedientes.
 
-Link de la app desplegada:
+Link de la app desplegada: https://mesa-de-entradas-evaluaci-n-aguerre-tomas-production.up.railway.app/dashboard
 
 ## Stack
 - Frontend: Vite, React, TypeScript y Ant Design.
