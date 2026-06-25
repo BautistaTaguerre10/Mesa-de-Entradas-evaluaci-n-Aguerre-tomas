@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Persona {
+  id          Int                   @id @default(autoincrement())
+  dni         String                @unique
+  apellido    String
+  nombre      String
+  expedientes ExpedientePersona[]
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+}
+
+model Organismo {
+  id             Int          @id @default(autoincrement())
+  codigo         String       @unique
+  nombre         String
+  caratulaTitulo String
+  ciudad         Ciudad
+  fuero          Fuero
+  expedientes    Expediente[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Expediente {
+  id              Int                   @id @default(autoincrement())
+  codigoOrganismo String
+  tipo            TipoExpediente
+  numero          Int
+  anio            Int
+  caratula        String
+  ciudad          Ciudad
+  clave           String                @unique
+  organismo       Organismo             @relation(fields: [codigoOrganismo], references: [codigo])
+  personas        ExpedientePersona[]
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
+  @@unique([numero])
+}
+
+model TipoVinculo {
+  id          Int                   @id @default(autoincrement())
+  descripcion String                @unique
+  expedientes ExpedientePersona[]
+}
+
+model ExpedientePersona {
+  id              Int          @id @default(autoincrement())
+  expedienteId    Int
+  personaId       Int
+  tipoVinculoId   Int
+  esActorPrincipal Boolean      @default(false)
+  expediente      Expediente   @relation(fields: [expedienteId], references: [id], onDelete: Cascade)
+  persona         Persona      @relation(fields: [personaId], references: [id])
+  tipoVinculo     TipoVinculo  @relation(fields: [tipoVinculoId], references: [id])
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@unique([expedienteId, personaId])
+  @@index([expedienteId, esActorPrincipal])
+}
+
+enum Ciudad {
+  NEUQUEN
+  ZAPALA
+  JUNIN_DE_LOS_ANDES
+}
+
+enum Fuero {
+  EJECUTIVOS
+  CIVIL
+  LABORAL
+  FAMILIA
+}
+
+enum TipoExpediente {
+  EXP
+  LEG
+}
